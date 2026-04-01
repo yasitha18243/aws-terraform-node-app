@@ -56,5 +56,48 @@ aws-terraform-node-app/
 git clone https://github.com/yasitha18243/aws-terraform-node-app.git
 cd aws-terraform-node-app
 ```
+### 2. Create Terraform State Storage
+```bash
+# Create S3 bucket for Terraform state
+aws s3 mb s3://node-app-terraform-state-2026 --region ap-southeast-2
 
+# Enable versioning
+aws s3api put-bucket-versioning `
+  --bucket ynode-app-terraform-state-2026 `
+  --versioning-configuration Status=Enabled
+
+# Create DynamoDB table for state locking
+aws dynamodb create-table `
+  --table-name terraform-state-lock `
+  --attribute-definitions AttributeName=LockID,AttributeType=S `
+  --key-schema AttributeName=LockID,KeyType=HASH `
+  --billing-mode PAY_PER_REQUEST `
+  --region ap-southeast-2
+```
+### 3. Run Terraform
+```bash
+cd terraform
+
+# Download AWS provider
+terraform init
+
+# Preview what will be created
+terraform plan
+
+# Deploy
+terraform apply
+```
+### 4. Test 
+```bash
+# Get ALB URL
+terraform output alb_dns_name
+
+# Test endpoints
+curl http:///health
+curl http:///games
+```
+### 6. Destroy when done
+```bash
+terraform destroy
+```
 
