@@ -87,7 +87,7 @@ terraform plan
 # Deploy
 terraform apply
 ```
-### 4. Test 
+### 4. Test the App
 ```bash
 # Get ALB URL
 terraform output alb_dns_name
@@ -100,4 +100,30 @@ curl http:///games
 ```bash
 terraform destroy
 ```
+## Security Highlights
+
+- EC2 instances are in **private subnets** — not directly
+  accessible from the internet
+- ALB is the **only public entry point**
+- IAM roles use **least privilege** — EC2 can only
+  read from its own S3 bucket
+- Public access is blocked from the S3 bucket
+- No hardcoded credentials anywhere in code
+- Terraform state encrypted at rest in S3
+
+## Estimated AWS Cost
+
+| Resource      | Cost                        |
+|---------------|-----------------------------|
+| EC2 x2        | Free tier (t3.micro)        |
+| ALB           | ~$0.0252/hr (~$18/month)    |
+| S3            | < $1/month                  |
+| **Total**     | **~$0 with free tier**      |
+
+> Always run `terraform destroy` when not in use
+
+## Author
+
+Yasitha Herath — [LinkedIn](https://www.linkedin.com/in/yasitha18243)
+  | [GitHub](https://github.com/yasitha18243)
 
