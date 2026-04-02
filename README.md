@@ -116,7 +116,7 @@ terraform destroy
 | Resource      | Cost                        |
 |---------------|-----------------------------|
 | EC2 x2        | Free tier (t3.micro)        |
-| ALB           | ~$0.025/hr (~$18/month)    |
+| ALB           | ~$0.025/hr (~$18/month)     |
 | S3            | < $1/month                  |
 | **Total**     | **~$0 with free tier**      |
 
