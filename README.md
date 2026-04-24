@@ -63,7 +63,7 @@ aws s3 mb s3://node-app-terraform-state-2026 --region ap-southeast-2
 
 # Enable versioning
 aws s3api put-bucket-versioning `
-  --bucket ynode-app-terraform-state-2026 `
+  --bucket node-app-terraform-state-2026 `
   --versioning-configuration Status=Enabled
 
 # Create DynamoDB table for state locking
