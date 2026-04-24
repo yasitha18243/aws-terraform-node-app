@@ -7,13 +7,8 @@ terraform {
     }
   }
 
-  # State storage in AWS
-  backend "s3" {
-    bucket       = "node-app-terraform-state-2026"
-    key          = "dev/terraform.tfstate"
-    region       = "ap-southeast-2"
-    use_lockfile = true
-  }
+  backend "s3" {} # Values passed via backend.hcl at init
+
 }
 
 provider "aws" {
@@ -35,10 +30,12 @@ module "ec2" {
   public_subnet_ids = module.vpc.public_subnet_ids
   app_bucket_arn    = module.s3.app_bucket_arn
   app_bucket_name   = module.s3.app_bucket_name
+  instance_type     = var.instance_type
 }
 
 module "s3" {
   source       = "./modules/s3"
   project_name = var.project_name
+  environment  = var.environment
 }
 

@@ -92,7 +92,7 @@ resource "aws_iam_instance_profile" "ec2_profile" {
 resource "aws_instance" "app" {
   count                  = 2
   ami                    = data.aws_ami.amazon_linux_2023.id
-  instance_type          = "t3.micro"
+  instance_type          = var.instance_type
   subnet_id              = var.public_subnet_ids[count.index]
   vpc_security_group_ids = [aws_security_group.ec2.id]
 

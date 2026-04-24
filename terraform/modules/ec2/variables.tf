@@ -6,3 +6,4 @@ variable "public_subnet_ids" {
 }
 variable "app_bucket_arn" {}
 variable "app_bucket_name" {}
+variable "instance_type" {}

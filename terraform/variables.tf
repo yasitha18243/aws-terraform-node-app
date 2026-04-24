@@ -1,15 +1,29 @@
 variable "aws_region" {
-  default = "ap-southeast-2"
+  description = "AWS region to deploy resources"
+  type        = string
 }
 
 variable "project_name" {
-  default = "node-api-terraform"
+  description = "Project name used for resource naming and tagging"
+  type        = string
 }
 
 variable "environment" {
-  default = "dev"
+  description = "Environment name (dev, staging, prod)"
+  type        = string
+
+  validation {
+    condition     = contains(["dev", "staging", "prod"], var.environment)
+    error_message = "Environment must be dev, staging, or prod."
+  }
 }
 
 variable "vpc_cidr" {
-  default = "10.0.0.0/16"
+  description = "CIDR block for the VPC"
+  type        = string
+}
+
+variable "instance_type" {
+  description = "EC2 instance type"
+  type        = string
 }
