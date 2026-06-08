@@ -6,9 +6,25 @@ best practices.
 
 ## Architecture
 
-![Architecture Diagram](docs/architecture.png)
+![Architecture Diagram](docs/architecture.png) 
 
-## What This Project Builds
+## Project Status — actively building
+
+✅ Completed
+- VPC, EC2, ALB provisioned via Terraform
+- Load balancer configured
+- Environments isolated (dev/staging/prod)
+- Remote Terraform state in S3
+
+🔄 In Progress  
+- GitHub Actions CI/CD pipeline
+
+⬜ Planned
+- Dockerize application
+- CloudWatch monitoring
+- Secrets Manager
+
+## What This Project Builds so far
 
 - VPC with public and private subnets across 2 AZs
 - Application Load Balancer - Public Facing
