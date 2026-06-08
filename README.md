@@ -24,7 +24,7 @@ best practices.
 - CloudWatch monitoring
 - Secrets Manager
 
-## What This Project Builds so far
+## What This Project Builds So Far
 
 - VPC with public and private subnets across 2 AZs
 - Application Load Balancer - Public Facing
