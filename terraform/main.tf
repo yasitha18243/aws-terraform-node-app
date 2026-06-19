@@ -39,3 +39,14 @@ module "s3" {
   environment  = var.environment
 }
 
+module "iam_oidc" {
+  aws_region           = var.aws_region
+  project_name         = var.project_name
+  source               = "./modules/iam_oidc"
+  github_org           = var.github_org
+  github_repo          = var.github_repo
+  environment          = var.environment
+  aws_account_id       = var.aws_account_id
+  create_oidc_provider = var.create_oidc_provider
+}
+

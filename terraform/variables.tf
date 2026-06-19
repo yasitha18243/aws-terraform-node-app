@@ -27,3 +27,24 @@ variable "instance_type" {
   description = "EC2 instance type"
   type        = string
 }
+
+variable "github_org" {
+  description = "Github organization or username"
+  type        = string
+}
+
+variable "github_repo" {
+  description = "Github respository name"
+  type        = string
+}
+
+variable "aws_account_id" {
+  description = "AWS account ID"
+  type        = string
+}
+
+variable "create_oidc_provider" {
+  description = "Github respository name"
+  type        = bool
+  default     = true
+}

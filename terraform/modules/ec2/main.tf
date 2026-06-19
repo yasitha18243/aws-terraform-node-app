@@ -122,7 +122,8 @@ resource "aws_instance" "app" {
   EOF
 
   tags = {
-    Name = "${var.project_name}-app-${count.index + 1}"
+    Environment = var.environment
+    Name        = "${var.project_name}-app-${count.index + 1}"
   }
 }
 

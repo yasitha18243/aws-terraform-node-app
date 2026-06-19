@@ -4,3 +4,7 @@ project_name  = "node-app"
 environment   = "prod"
 vpc_cidr      = "10.2.0.0/16"
 instance_type = "t3.large"
+github_org           = "yasitha18243"
+github_repo          = "aws-terraform-node-app"
+aws_account_id       = "840854900781"
+create_oidc_provider = false
