@@ -1,0 +1,124 @@
+name: Terraform Apply
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'terraform/**'
+
+  workflow_dispatch:
+    inputs:
+        environment:
+            description: 'Environment to Deploy'
+            required: true
+            type: choice
+            options: [dev, staging, prod]
+
+env:
+    TF_VERSION: "1.14.7"
+    AWS_REGION: "ap-southeast-2"
+    WORKING_DIR: "./terraform"
+
+
+jobs:
+    # Dev - runs automatically on push to main branch and no approval needed
+    apply-dev:
+        name: Apply - Dev
+        runs-on: ubuntu-latest
+
+        if: github.event_name == 'push'
+
+        environment: dev
+
+        # OIDC permissions for AWS credential configuration and read permission for checkout repo code
+        permissions:
+            id-token: write
+            contents: read
+
+        steps:
+            - uses: actions/checkout@v4 # Pull the code into the runner
+
+            # Authenticate to AWS using OIDC and dev specific IAM role
+            - name: Cofigure AWS credentials (OIDC)
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                 role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+                 aws-region: ${{env.AWS_REGION}}
+            
+            # Install Terraform CLI on the runner
+            - uses: hashicorp/setup-terraform@v3
+              with:
+                    terraform_version: ${{env.TF_VERSION}}
+            # Connect to dev's remote state file
+            - name: Terraform Init
+              working-directory: ${{ env.WORKING_DIR }}
+              run: terraform init - backend-config=environments/dev/backend.hcl
+            # Apply the changes
+            - name: Terraform Apply
+              working-directory: ${{env.WORKING_DIR}}
+              run: terrafom apply -var-file= environments/dev/terraform/tfvars -auto-approve
+    # Staging - only runs when manually triggered and 'staging' was chosen
+    apply-staging: 
+        name : Apply - Staging
+        runs-on: ubuntu-latest
+
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging'
+
+        environment: staging
+
+        permissions:
+            id-token: write
+            contents: read
+
+        steps:
+          - uses: actions/checkout@v4
+
+          - name: Configure AWS credentials (OIDC)
+            uses: aws-actions/configure-aws-credentials@v4
+            with:
+                 role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+                 aws-region: ${{env.AWS_REGION}}
+
+          - uses: hashicorp/setup-terraform@v3
+            with:
+              terform_version: ${{env.TF_VERSION}}
+
+          - name: Terraform Init
+            working-directory: ${{ env.WORKING_DIR }}
+            run: terraform init - backend-config=environments/staging/backend.hcl
+
+          - name: Terraform Apply
+            working-directory: ${{env.WORKING_DIR}}
+            run: terraform apply -var-file= environments/staging/terraform/tfvars -auto-approve
+
+    apply-prod:
+        name : Apply - Prod
+        runs-on: ubuntu-latest
+
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'prod'
+
+        environment: prod
+
+        permissions:
+            id-token: write
+            contents: read
+
+        steps:
+          - uses: actions/checkout@v4
+
+          - name: Configure AWS credentials (OIDC)
+            uses: aws-actions/configure-aws-credentials@v4
+            with:
+                 role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+                 aws-region: ${{env.AWS_REGION}}
+
+          - uses: hashicorp/setup-terraform@v3
+            with:
+              terform_version: ${{env.TF_VERSION}}
+
+          - name: Terraform Init
+            working-directory: ${{ env.WORKING_DIR }}
+            run: terraform init - backend-config=environments/prod/backend.hcl
+
+          - name: Terraform Apply
+            working-directory: ${{env.WORKING_DIR}}
+            run: terraform apply -var-file= environments/prod/terraform/tfvars -auto-approve

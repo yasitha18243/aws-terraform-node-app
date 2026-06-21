@@ -7,3 +7,8 @@ output "alb_dns_name" {
   description = "ALB DNS name for accessing the app"
   value       = module.ec2.alb_dns_name
 }
+
+output "github_actions_role_arn" {
+  description = "Copy this into GitHub Secrets"
+  value       = module.iam_oidc.role_arn
+}

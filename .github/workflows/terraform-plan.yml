@@ -1,0 +1,86 @@
+name : Terraform Plan
+
+on:
+  # Trigger on pull requests to main branch, but only if changes are made to terraform
+  pull_request: 
+    branches: [main]
+    paths:
+      - 'terraform/**'
+
+env:
+  TF_VERSION: "1.14.7"
+
+  AWS_REGION: "ap-southeast-2"
+  WORKING_DIR: "./terraform"
+
+jobs:
+  plan:
+    name: Plan - ${{matrix.environment}}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: [dev, staging]
+
+    # OIDC permissions for AWS credential configuration, and read/write permissions for PR comments
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+
+    steps:
+      # Download the code into the runner VM
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Exchange OIDC token for AWS credentials based on the role ARN specified in the repository secrets
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets[format('AWS_ROLE_ARN_{0}', matrix.environment)]}}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      # Install Terraform CLI using the official HashiCorp action
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+      
+      # Intialize the terraform
+      - name: Terraform Init
+        working-directory: ${{ env.WORKING_DIR }}
+        run: terraform init - backend-config=environment=${{ matrix.environment }}/backend.hcl
+
+      # Validate the terraform configuration
+      - name: Terraform Validate
+        working-directory: ${{ env.WORKING_DIR }}
+        run: terraform validate
+      
+      # Check terraform formatting
+      - name: Terraform Format Check
+        working-directory: ${{ env.WORKING_DIR }}
+        run: terraform fmt -check -recursive
+      
+      # Run terraform plan and save the output to a file
+      - name: Terraform Plan
+        working-directory: ${{ env.WORKING_DIR }}
+        run: |
+          terraform plan \
+            -var-file=environment/${{ matrix.environment}}/terraform.tfvars \
+            -no-color \
+            | tee plan-output.txt
+      
+      # Take the saved plan output and post it as a comment on the PR
+      - name: Post Plan Output as PR Comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const planOutput = fs.readFileSync('terraform/plan-output.txt', 'utf8');
+            const truncated = output.length > 60000 ? output.substring(0, 60000) + "\n\n[Output truncated]" : output;
+            
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## Terraform Plan Output for ${matrix.environment}\n\`\`\`\n${truncated}\n\`\`\``
+            });
