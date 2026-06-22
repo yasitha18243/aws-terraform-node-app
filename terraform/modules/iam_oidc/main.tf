@@ -15,7 +15,7 @@ locals {
 }
 
 resource "aws_iam_role" "github_actions" {
-  name = "GitHubActions - ${var.environment}"
+  name = "GitHubActions-${var.environment}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -24,7 +24,7 @@ resource "aws_iam_role" "github_actions" {
       Principal = {
         Federated = local.oidc_proivder_arn
       }
-      Action = "sts.AssumeRoleWithWebIdentity"
+      Action = "sts:AssumeRoleWithWebIdentity"
       Condition = {
         StringLike = {
           "token.actions.githubusercontent.com:sub" = "repo:${var.github_org}/${var.github_repo}:*"

@@ -8,5 +8,5 @@ output "role_name" {
 
 output "oidc_provider_arn" {
   description = "OIDC Provider ARN"
-  value       = aws_iam_openid_connect_provider.github.arn
+  value       = try(aws_iam_openid_connect_provider.github[0].arn, null)
 }
