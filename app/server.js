@@ -25,6 +25,15 @@ app.post("/games", (req, res) => {
   });
 });
 
+app.get("/games/genre", (req, res) => {
+  const game = req.body;
+  res.json([
+    { id: 1, name: "War" },
+    { id: 2, name: "Sports" },
+    { id: 3, name: "Open World" },
+  ]);
+});
+
 const PORT = 3000;
 
 app.listen(PORT, () => {
