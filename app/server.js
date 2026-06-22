@@ -34,6 +34,15 @@ app.get("/games/genre", (req, res) => {
   ]);
 });
 
+app.get("/games/type", (req, res) => {
+  const game = req.body;
+  res.json([
+    { id: 1, name: "Strategic" },
+    { id: 2, name: "Third Person" },
+    { id: 3, name: "First Person" },
+  ]);
+});
+
 const PORT = 3000;
 
 app.listen(PORT, () => {
