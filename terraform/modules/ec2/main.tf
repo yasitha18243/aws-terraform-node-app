@@ -109,16 +109,10 @@ resource "aws_instance" "app" {
 
     mkdir -p /app
 
-    # Download code from S3
-    aws s3 cp s3://${var.app_bucket_name}/app/server.js /app/server.js
-    aws s3 cp s3://${var.app_bucket_name}/app/package.json /app/package.json
-
-    # Install dependencies
-    cd /app
-    npm install
-
-    # Start app
-    node server.js
+    export APP_BUCKET_NAME=${var.app_bucket_name}
+    aws s3 cp s3://${var.app_bucket_name}/app/deploy.sh /app/deploy.sh
+    chmod +x /app/deploy.sh
+    bash /app/deploy.sh
   EOF
 
   tags = {

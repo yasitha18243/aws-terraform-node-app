@@ -1,0 +1,58 @@
+name: Deploy App
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'app/**'              # only runs when app code changes
+
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy app to'
+        required: true
+        type: choice
+        options: [dev, staging, prod]
+
+env:
+  AWS_REGION: "ap-southeast-2"
+
+jobs:
+  deploy:
+    name: Deploy App - ${{ inputs.environment || 'dev' }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment || 'dev' }}
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # Step 1: push the updated files into S3
+      - name: Upload app files to S3
+        run: |
+          aws s3 cp app/server.js s3://${{ secrets.APP_BUCKET_NAME }}/app/server.js
+          aws s3 cp app/package.json s3://${{ secrets.APP_BUCKET_NAME }}/app/package.json
+          aws s3 cp app/deploy.sh s3://${{ secrets.APP_BUCKET_NAME }}/app/deploy.sh
+
+      # Step 2: tell the EC2 instance to re-run deploy.sh
+      - name: Re-deploy via SSM
+        run: |
+          aws ssm send-command \
+            --document-name "AWS-RunShellScript" \
+            --targets "Key=tag:Environment,Values=${{ inputs.environment || 'dev' }}" \
+            --parameters '{"commands":[
+              "aws s3 cp s3://${{ secrets.APP_BUCKET_NAME }}/app/deploy.sh /app/deploy.sh",
+              "chmod +x /app/deploy.sh",
+              "bash /app/deploy.sh"
+            ]}' \
+            --comment "Redeploy app via GitHub Actions"
