@@ -23,3 +23,10 @@ resource "aws_s3_object" "package_json" {
   source = "${path.root}/../app/package.json"
   etag   = filemd5("${path.root}/../app/package.json")
 }
+
+resource "aws_s3_object" "deploy.sh" {
+  bucket = aws_s3_bucket.app.id
+  key    = "app/deploy.sh"
+  source = "${path.root}/../app/deploy.sh"
+  etag   = filemd5("${path.root}/../app/deploy.sh")
+}
