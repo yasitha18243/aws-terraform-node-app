@@ -59,7 +59,7 @@ resource "aws_iam_role_policy" "github_actions" {
           "s3:DeleteObject", #deletes the .tflock file on unlock
           "s3:ListBucket"
         ]
-        Resource = ["arn:aws:s3:::node-app-terraform-state-2026", "arn:aws:s3:::node-app-terraform-state-2026/*"]
+        Resource = ["arn:aws:s3:::node-app-terraform-state-2026", "arn:aws:s3:::node-app-terraform-state-2026/*", "arn:aws:s3:::aws-terraform-node-app-files", "arn:aws:s3:::aws-terraform-node-app-files/*"]
       },
 
       # EC2

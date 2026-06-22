@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "app" {
-  bucket = "${var.project_name}-app-files"
+  bucket = "${var.project_name}-files"
 }
 
 resource "aws_s3_bucket_public_access_block" "app" {
