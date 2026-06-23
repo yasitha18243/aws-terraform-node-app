@@ -86,7 +86,8 @@ resource "aws_iam_role_policy" "ec2_s3_policy" {
           "ssmmessages:CreateDataChannel",
           "ssmmessages:OpenControlChannel",
           "ssmmessages:OpenDataChannel",
-          "ec2messages:GetMessages"
+          "ec2messages:GetMessages",
+          "ec2messages:AcknowledgeMessage",
         ]
         Resource = ["*"]
     }]
