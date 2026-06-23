@@ -84,7 +84,7 @@ jobs:
 
           - name: Terraform Init
             working-directory: ${{ env.WORKING_DIR }}
-            run: terraform init - backend-config=environments/staging/backend.hcl
+            run: terraform init -backend-config=environments/staging/backend.hcl
 
           - name: Terraform Apply
             working-directory: ${{env.WORKING_DIR}}
