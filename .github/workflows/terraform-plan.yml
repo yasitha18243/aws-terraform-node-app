@@ -48,7 +48,7 @@ jobs:
       # Intialize the terraform
       - name: Terraform Init
         working-directory: ${{ env.WORKING_DIR }}
-        run: terraform init - backend-config=environment=${{ matrix.environment }}/backend.hcl
+        run: terraform init -backend-config=environment=${{ matrix.environment }}/backend.hcl
 
       # Validate the terraform configuration
       - name: Terraform Validate
