@@ -55,7 +55,7 @@ jobs:
             # Apply the changes
             - name: Terraform Apply
               working-directory: ${{env.WORKING_DIR}}
-              run: terrafom apply -var-file=environments/dev/terraform/tfvars -auto-approve
+              run: terraform apply -var-file=environments/dev/terraform/tfvars -auto-approve
     # Staging - only runs when manually triggered and 'staging' was chosen
     apply-staging: 
         name : Apply - Staging
