@@ -77,6 +77,18 @@ resource "aws_iam_role_policy" "ec2_s3_policy" {
         var.app_bucket_arn,
         "${var.app_bucket_arn}/*"
       ]
+      },
+      {
+        Effect = "Allow"
+        actions = [
+          "ssm:UpdateInstanceInformation",
+          "ssmmessages:CreateControlChannel",
+          "ssmmessages:CreateDataChannel",
+          "ssmmessages:OpenControlChannel",
+          "ssmmessages:OpenDataChannel",
+          "ec2messages:GetMessages"
+        ]
+        Resource = ["*"]
     }]
   })
 }
