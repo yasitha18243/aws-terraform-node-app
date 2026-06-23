@@ -12,3 +12,8 @@ output "github_actions_role_arn" {
   description = "Copy this into GitHub Secrets"
   value       = module.iam_oidc.role_arn
 }
+
+output "app_bucket_name" {
+  description = "S3 bucket name for app storage"
+  value       = module.s3.app_bucket_name
+}
