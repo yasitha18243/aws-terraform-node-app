@@ -51,7 +51,7 @@ jobs:
             # Connect to dev's remote state file
             - name: Terraform Init
               working-directory: ${{ env.WORKING_DIR }}
-              run: terraform init - backend-config=environments/dev/backend.hcl
+              run: terraform init -backend-config=environments/dev/backend.hcl
             # Apply the changes
             - name: Terraform Apply
               working-directory: ${{env.WORKING_DIR}}
@@ -117,7 +117,7 @@ jobs:
 
           - name: Terraform Init
             working-directory: ${{ env.WORKING_DIR }}
-            run: terraform init - backend-config=environments/prod/backend.hcl
+            run: terraform init -backend-config=environments/prod/backend.hcl
 
           - name: Terraform Apply
             working-directory: ${{env.WORKING_DIR}}
