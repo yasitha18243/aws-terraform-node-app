@@ -26,7 +26,6 @@ app.post("/games", (req, res) => {
 });
 
 app.get("/games/genre", (req, res) => {
-  const game = req.body;
   res.json([
     { id: 1, name: "War" },
     { id: 2, name: "Sports" },
@@ -35,11 +34,18 @@ app.get("/games/genre", (req, res) => {
 });
 
 app.get("/games/type", (req, res) => {
-  const game = req.body;
   res.json([
     { id: 1, name: "Strategic" },
     { id: 2, name: "Third Person" },
     { id: 3, name: "First Person" },
+  ]);
+});
+
+app.get("/games/platform", (req, res) => {
+  res.json([
+    { id: 1, name: "PC" },
+    { id: 2, name: "PlayStation" },
+    { id: 3, name: "Xbox" },
   ]);
 });
 
