@@ -55,7 +55,7 @@ jobs:
             # Apply the changes
             - name: Terraform Apply
               working-directory: ${{env.WORKING_DIR}}
-              run: terrafom apply -var-file= environments/dev/terraform/tfvars -auto-approve
+              run: terrafom apply -var-file=environments/dev/terraform/tfvars -auto-approve
     # Staging - only runs when manually triggered and 'staging' was chosen
     apply-staging: 
         name : Apply - Staging
@@ -88,7 +88,7 @@ jobs:
 
           - name: Terraform Apply
             working-directory: ${{env.WORKING_DIR}}
-            run: terraform apply -var-file= environments/staging/terraform/tfvars -auto-approve
+            run: terraform apply -var-file=environments/staging/terraform/tfvars -auto-approve
 
     apply-prod:
         name : Apply - Prod
@@ -121,4 +121,4 @@ jobs:
 
           - name: Terraform Apply
             working-directory: ${{env.WORKING_DIR}}
-            run: terraform apply -var-file= environments/prod/terraform/tfvars -auto-approve
+            run: terraform apply -var-file=environments/prod/terraform/tfvars -auto-approve
