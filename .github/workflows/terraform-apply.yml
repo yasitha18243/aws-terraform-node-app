@@ -52,6 +52,18 @@ jobs:
             - name: Terraform Init
               working-directory: ${{ env.WORKING_DIR }}
               run: terraform init -backend-config=environments/dev/backend.hcl
+
+            # Generate the real tfvars file from GitHub secrets (not committed to git)
+            - name: Generate terraform.tfvars
+              working-directory: ${{ env.WORKING_DIR }}
+              run: |
+                cat > environments/dev/terraform.tfvars << EOF
+                github_org      = "${{ secrets.GB_ORG }}"
+                github_repo     = "${{ secrets.GB_REPO }}"
+                app_bucket_name = "${{ secrets.APP_BUCKET_NAME }}"
+                aws_region      = "${{ env.AWS_REGION }}"
+                environment     = "dev"
+                EOF
             # Apply the changes
             - name: Terraform Apply
               working-directory: ${{env.WORKING_DIR}}
@@ -80,11 +92,23 @@ jobs:
 
           - uses: hashicorp/setup-terraform@v3
             with:
-              terform_version: ${{env.TF_VERSION}}
+              terraform_version: ${{env.TF_VERSION}}
 
           - name: Terraform Init
             working-directory: ${{ env.WORKING_DIR }}
             run: terraform init -backend-config=environments/staging/backend.hcl
+
+          # Generate the real tfvars file from GitHub secrets (not committed to git)
+          - name: Generate terraform.tfvars
+            working-directory: ${{ env.WORKING_DIR }}
+            run: |
+              cat > environments/staging/terraform.tfvars << EOF
+              github_org      = "${{ secrets.GB_ORG }}"
+              github_repo     = "${{ secrets.GB_REPO }}"
+              app_bucket_name = "${{ secrets.APP_BUCKET_NAME }}"
+              aws_region      = "${{ env.AWS_REGION }}"
+              environment     = "staging"
+              EOF
 
           - name: Terraform Apply
             working-directory: ${{env.WORKING_DIR}}
@@ -119,6 +143,17 @@ jobs:
             working-directory: ${{ env.WORKING_DIR }}
             run: terraform init -backend-config=environments/prod/backend.hcl
 
+          # Generate the real tfvars file from GitHub secrets (not committed to git)
+          - name: Generate terraform.tfvars
+            working-directory: ${{ env.WORKING_DIR }}
+            run: |
+              cat > environments/prod/terraform.tfvars << EOF
+              github_org      = "${{ secrets.GB_ORG }}"
+              github_repo     = "${{ secrets.GB_REPO }}"
+              app_bucket_name = "${{ secrets.APP_BUCKET_NAME }}"
+              aws_region      = "${{ env.AWS_REGION }}"
+              environment     = "prod"
+              EOF
           - name: Terraform Apply
             working-directory: ${{env.WORKING_DIR}}
             run: terraform apply -var-file=environments/prod/terraform.tfvars -auto-approve
