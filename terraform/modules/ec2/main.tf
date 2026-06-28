@@ -80,7 +80,7 @@ resource "aws_iam_role_policy" "ec2_s3_policy" {
       },
       {
         Effect = "Allow"
-        actions = [
+        Action = [
           "ssm:UpdateInstanceInformation",
           "ssmmessages:CreateControlChannel",
           "ssmmessages:CreateDataChannel",
