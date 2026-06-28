@@ -106,6 +106,15 @@ resource "aws_instance" "app" {
 
   user_data = <<-EOF
     #!/bin/bash
+    set -ex
+    
+    # Redirect all output to a log file
+    exec > /var/log/user-data.log 2>&1
+
+    # Enable and start the SSM agent
+    systemctl enable amazon-ssm-agent
+    systemctl start amazon-ssm-agent
+
     # Update system packages
     dnf update -y
 
