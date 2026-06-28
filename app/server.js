@@ -41,6 +41,14 @@ app.get("/games/type", (req, res) => {
   ]);
 });
 
+app.get("/games/engines", (req, res) => {
+  res.json([
+    { id: 1, name: "Unreal Engine" },
+    { id: 2, name: "Unity" },
+    { id: 3, name: "Godot" },
+  ]);
+});
+
 app.get("/games/platform", (req, res) => {
   res.json([
     { id: 1, name: "PC" },
