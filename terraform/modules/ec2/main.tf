@@ -60,6 +60,12 @@ resource "aws_iam_role" "ec2_role" {
   })
 }
 
+#SSM Managed Instance Core Policy Attachment
+resource "aws_iam_role_policy_attachment" "ssm_managed" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
 #IAM Policy to allow EC2 to read from S3
 resource "aws_iam_role_policy" "ec2_s3_policy" {
   name = "${var.project_name}-ec2-s3-policy"
@@ -77,23 +83,6 @@ resource "aws_iam_role_policy" "ec2_s3_policy" {
         var.app_bucket_arn,
         "${var.app_bucket_arn}/*"
       ]
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "ssm:UpdateInstanceInformation",
-          "ssmmessages:CreateControlChannel",
-          "ssmmessages:CreateDataChannel",
-          "ssmmessages:OpenControlChannel",
-          "ssmmessages:OpenDataChannel",
-          "ec2messages:GetMessages",
-          "ssm:ListCommands",
-          "ssm:ListCommandInvocations",
-          "ec2messages:AcknowledgeMessage",
-          "ec2messages:GetEndpoint",
-          "ec2messages:SendReply"
-        ]
-        Resource = ["*"]
     }]
   })
 }
