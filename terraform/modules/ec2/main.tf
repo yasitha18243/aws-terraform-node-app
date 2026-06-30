@@ -38,6 +38,13 @@ resource "aws_security_group" "ec2" {
     protocol        = "tcp"
     security_groups = [aws_security_group.alb.id]
   }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [var.ssh_allowed_cidr]
+  }
   egress {
     from_port   = 0
     to_port     = 0
@@ -101,22 +108,21 @@ resource "aws_instance" "app" {
   instance_type          = var.instance_type
   subnet_id              = var.public_subnet_ids[count.index]
   vpc_security_group_ids = [aws_security_group.ec2.id]
+  key_name               = var.key_name
 
   iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
 
   user_data = <<-EOF
     #!/bin/bash
-    set -ex
-    
-    # Redirect all output to a log file
-    exec > /var/log/user-data.log 2>&1
-
-    # Enable and start the SSM agent
-    systemctl enable amazon-ssm-agent
-    systemctl start amazon-ssm-agent
+    set -e
 
     # Update system packages
     dnf update -y
+
+    # Install and start SSM agent
+    dnf install -y amazon-ssm-agent
+    systemctl enable amazon-ssm-agent
+    systemctl start amazon-ssm-agent
 
     # Install Node.js 20 (LTS) via NodeSource
     curl -fsSL https://rpm.nodesource.com/setup_20.x | bash -
@@ -128,6 +134,7 @@ resource "aws_instance" "app" {
     aws s3 cp s3://${var.app_bucket_name}/app/deploy.sh /app/deploy.sh
     chmod +x /app/deploy.sh
     bash /app/deploy.sh
+
   EOF
 
   tags = {

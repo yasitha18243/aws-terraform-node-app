@@ -31,6 +31,7 @@ module "ec2" {
   app_bucket_arn    = module.s3.app_bucket_arn
   app_bucket_name   = module.s3.app_bucket_name
   instance_type     = var.instance_type
+  key_name          = var.key_name
 }
 
 module "s3" {
@@ -48,5 +49,6 @@ module "iam_oidc" {
   environment          = var.environment
   aws_account_id       = var.aws_account_id
   create_oidc_provider = var.create_oidc_provider
+  ec2_role_arn         = module.ec2.ec2_role_arn
 }
 

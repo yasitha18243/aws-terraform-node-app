@@ -48,3 +48,8 @@ variable "create_oidc_provider" {
   type        = bool
   default     = true
 }
+
+variable "key_name" {
+  type        = string
+  description = "Name of the existing EC2 key pair to use for SSH access"
+}

@@ -9,3 +9,7 @@ output "instance_ids" {
 output "instance_azs" {
   value = aws_instance.app[*].availability_zone
 }
+
+output "ec2_role_arn" {
+  value = aws_iam_role.ec2_role.arn
+}

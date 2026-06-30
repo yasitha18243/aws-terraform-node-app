@@ -11,7 +11,7 @@ data "aws_iam_openid_connect_provider" "github_existing" {
 }
 
 locals {
-  oidc_proivder_arn = var.create_oidc_provider ? aws_iam_openid_connect_provider.github[0].arn : data.aws_iam_openid_connect_provider.github_existing[0].arn
+  oidc_provider_arn = var.create_oidc_provider ? aws_iam_openid_connect_provider.github[0].arn : data.aws_iam_openid_connect_provider.github_existing[0].arn
 }
 
 resource "aws_iam_role" "github_actions" {
@@ -22,7 +22,7 @@ resource "aws_iam_role" "github_actions" {
     Statement = [{
       Effect = "Allow"
       Principal = {
-        Federated = local.oidc_proivder_arn
+        Federated = local.oidc_provider_arn
       }
       Action = "sts:AssumeRoleWithWebIdentity"
       Condition = {
@@ -37,7 +37,7 @@ resource "aws_iam_role" "github_actions" {
   })
 
   tags = {
-    Envrionment = var.environment
+    Environment = var.environment
   }
 }
 
@@ -81,7 +81,6 @@ resource "aws_iam_role_policy" "github_actions" {
       {
         Effect = "Allow"
         Action = [
-          "ec2:RunInstances",
           "ec2:TerminateInstances",
           "ec2:StartInstances",
           "ec2:StopInstances",
@@ -92,6 +91,17 @@ resource "aws_iam_role_policy" "github_actions" {
         Condition = {
           StringEquals = {
             "aws:ResourceTag/Environment" = var.environment
+          }
+        }
+      },
+      {
+        Effect   = "Allow"
+        Action   = "ec2:RunInstances"
+        Resource = "*"
+        Condition = {
+          StringEquals = {
+            "aws:RequestTag/Environment" = var.environment
+            "ec2:CreateAction"           = "RunInstances"
           }
         }
       },
@@ -136,6 +146,14 @@ resource "aws_iam_role_policy" "github_actions" {
           "ssm:DescribeInstanceInformation"
         ]
         Resource = "*"
+      },
+      {
+        Effect   = "Allow"
+        Action   = "iam:PassRole"
+        Resource = var.ec2_role_arn
+        Condition = {
+          StringEquals = { "iam:PassedToService" = "ec2.amazonaws.com" }
+        }
       }
     ]
   })
