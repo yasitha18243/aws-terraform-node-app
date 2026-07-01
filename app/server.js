@@ -46,6 +46,7 @@ app.get("/games/engines", (req, res) => {
     { id: 1, name: "Unreal Engine" },
     { id: 2, name: "Unity" },
     { id: 3, name: "Godot" },
+    { id: 4, name: "O3DE" },
   ]);
 });
 
